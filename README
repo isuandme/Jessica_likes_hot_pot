@@ -1,0 +1,48 @@
+/****************************************************************************************/
+Computer Science - Operating System Concepts (C352) - Fall, 2018
+
+Author: Jacob R. Pratt
+Date: 10/10/2018
+Location: Iowa State University of Science and Technology
+Revision: D.7742
+
+/****************************************************************************************/
+
+PORT NUMBER: 2505
+
+/****************************************************************************************/
+Compile: 
+
+Any folder: 'make' --> build, 'make clean' --> remove.
+
+
+/****************************************************************************************/
+Project:
+
+This project consists of writing a C program for a remote shell system. It involves a Server and a Client process. The server process resides on another machine, in server.c, and the user provides commands to the server via a client process, in client.c, on a local machine. The client sends the commands to the server, the server executes them, and sends the output back to the client.
+
+/****************************************************************************************/
+Makefile:
+
+The following terminal commands are supported by the local Makefile.
+
+"make" : builds both the client and server executable files.
+
+"make clean" : removes both client and server executable files, along with others
+
+"make ssh" : will ssh into the Iowa State computer science pyrite server
+
+"make scp" : will scp the current file to the directory specified
+
+"make tar" : make a tar-ball out of the current directory
+
+/****************************************************************************************/
+Errors:
+The project follows the standard errors that are produced from the standard commands. 
+
+/****************************************************************************************/
+Notes:
+
+Each client can store it's own history and doesn't need to be sent to the server
+
+
