@@ -51,10 +51,6 @@ int main(int argv, char * argc[]){
         
         printf("%s\n", buffer);
         
-        if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /*---- if the user enters "quit" as input the terminal quits ----*/
-            break;
-        }
-        
         if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){
             bzero(buffer, sizeof(buffer));
             buffer[0] = 'p';
@@ -64,16 +60,26 @@ int main(int argv, char * argc[]){
         int buff_size = strlen(buffer);     /* Encryption */
         int i;
         
+        // encrypts the thingy n' stuff
         for(i = 0; i < buff_size - 1; i++){
             buffer[i] = buffer[i] + N_;
         }
         
         send(clientSocket, buffer, sizeof(buffer), 0);
+        
+        // resets the encryption which is dumb and should change
+        for(i = 0; i < buff_size - 1; i++){
+            buffer[i] = buffer[i] - N_;
+        }
+        
+        // using the information after sending quit to kill the hcild process for this specific thingy
+        if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /*---- if the user enters "quit" as input the terminal quits ----*/
+            break;
+        }
+        
         bzero(buffer, sizeof(buffer));
         
         char rec_buffer[1048576];   /*---- a buffer that is set empty to recieve the message from the client ----*/
-        
-        // bzero(rec_buffer, sizeof(rec_buffer));  /*---- zeros the buffer ----*/
         
         if(recv(clientSocket, rec_buffer, sizeof(rec_buffer), 0) < 0){  /*---- recieves the socket connection message and sets it to buffer ----*/
             perror("recv"); /*---- prints a standar output ----*/

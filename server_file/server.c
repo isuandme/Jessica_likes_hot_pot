@@ -109,6 +109,10 @@ int main(int argv, char * argc[]) {
                     buffer[i] = buffer[i] - N_;
                 }
                 
+                if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /*---- if the user enters "quit" as input the terminal quits ----*/
+                    exit(0);
+                }
+                
                 char test[str_len]; /*---- copy length of input message ----*/
 
                 strcpy(test, buffer); /*---- copies string to test ----*/
@@ -172,18 +176,14 @@ int main(int argv, char * argc[]) {
             
         } else {
             
-            
-            // This is new and it works
-            if (waitpid(client_pid, NULL, WNOHANG) < 0) {
-                perror("Failed to collect child process");
-                break;
+            if(waitpid(client_pid, NULL, 0) > 0){
+                kill(getpid(), SIGCHLD);
             }
             
         }
         
     } // big while()
     
-    wait(NULL);
     close(greySock);
     return 0;
 }
