@@ -13,6 +13,11 @@
 
 #define N_  5
 
+struct Child {
+    pid_t client;
+    struct Child *next;
+};
+
 void run_command_method(int filedes , char **cmd) {  /* ---- Helper function to execute ---- */
     switch (fork()) {  /* ---- fork to make a child to run the execvp method ---- */
         case 0:
@@ -44,8 +49,6 @@ int main(int argv, char * argc[]) {
     
     socklen_t addr_size;    /* ---- size of address ---- */
     
-    pid_t client_pid;       /* ---- client pid ---- */
-    
     int i;
     
     welcomeSock = socket(AF_INET, SOCK_STREAM, 0);  /* ---- Sets up socket n' stuff ---- */
@@ -71,13 +74,10 @@ int main(int argv, char * argc[]) {
     else
         printf("Error in binding server side. \n");
     
-    // SETS A CHILD ARRAY
-    pid_t child_arr[20];
-    int j, child_i; // child_i is the index of the child array used in the parent process.
-    for(j = 0; j < 20; j++)
-    {
-        child_arr[j] = 0;
-    }
+    struct Child *firstChild;
+    
+    pid_t pid;
+    int stat;
     
     while(1){ /*---- Starts main while-loop ----*/
         /*---- Accept call creates a new socket for the incoming connection ----*/
@@ -89,19 +89,28 @@ int main(int argv, char * argc[]) {
             exit(1);
         }
         
-        if((client_pid = fork()) == 0) {    /*---- Starts the child ----*/
+        pid_t client_pid;       /* client pid */
+        
+        if((client_pid = fork()) == 0) {    /* Starts the child */
+            
+            printf("Parent: %d  --> Child pid: %d\n", getppid(), getpid());
             
             close(welcomeSock); /*---- Closes the welcome socket ----*/
             
             while(1) {
                 
+                while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
+                    printf("child %d terminated\n", pid);
+                }
+                
+                // general integer type for loops and stuff
                 int i;
                 
-                recv(greySock, buffer, sizeof(buffer), 0);  /*---- recieves message from client ----*/
+                recv(greySock, buffer, sizeof(buffer), 0);  /* recieves message from client */
                 
-                char *word; /*---- pointer to word ----*/
-                char *brkt;/*---- pointer to break ----*/
-                char *sep = " "; /*---- how we break stuff ----*/
+                char *word;     /* pointer to word */
+                char *brkt;     /* pointer to break */
+                char *sep = " ";    /*---- how we break stuff ----*/
 
                 int str_len = strlen(buffer); /*---- recieves message from client ----*/
                 
@@ -109,7 +118,7 @@ int main(int argv, char * argc[]) {
                     buffer[i] = buffer[i] - N_;
                 }
                 
-                if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /*---- if the user enters "quit" as input the terminal quits ----*/
+                if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /* "quit" terminates child process*/
                     exit(0);
                 }
                 
@@ -176,13 +185,15 @@ int main(int argv, char * argc[]) {
             
         } else {
             
-            if(waitpid(client_pid, NULL, 0) > 0){
-                kill(getpid(), SIGCHLD);
-            }
+            
             
         }
         
     } // big while()
+    
+    while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
+        printf("child %d terminated\n", pid);
+    }
     
     close(greySock);
     return 0;
