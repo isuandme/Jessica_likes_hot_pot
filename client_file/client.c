@@ -8,6 +8,8 @@
 
 #include <string.h>
 
+#include "historyList.h"
+
 #define N_      5
 
 int main(int argv, char * argc[]){
@@ -49,8 +51,6 @@ int main(int argv, char * argc[]){
         
         fgets(buffer, 1024, stdin); /*---- gets the characters from the terminal ----*/
         
-        printf("%s\n", buffer);
-        
         if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){
             bzero(buffer, sizeof(buffer));
             buffer[0] = 'p';
@@ -59,6 +59,32 @@ int main(int argv, char * argc[]){
         
         int buff_size = strlen(buffer);     /* Encryption */
         int i;
+        
+        /* gets the last characters in the history list and executes it */
+        if(buffer[0] == '!' && buffer[1] == '!') {
+            bzero(buffer, sizeof(buffer));
+            strcpy(buffer, get_index(1));
+        }
+        
+        /* gets the Nth element in the history list and executes it */
+        if(buffer[0] == '!' && buffer[1] > 47 && buffer[1] < 58) {
+            int index = buffer[1] - 48;
+            bzero(buffer, sizeof(buffer));
+            strcpy(buffer, get_index(index));
+        }
+        
+        /*  */
+        if(buffer[0] == 'H' && buffer[1] == 'i' && buffer[2] == 's' && buffer[3] == 't' && buffer[4] == 'o' && buffer[5] == 'r' && buffer[6] == 'y'){
+            char *temp_string = malloc(strlen(buffer));
+            strcpy(temp_string, buffer);
+            insert_node_first(temp_string);
+            display_cmdList();
+            continue;
+        } else if( strlen(buffer) > 2) {
+            char *temp_string = malloc(strlen(buffer));
+            strcpy(temp_string, buffer);
+            insert_node_first(temp_string);
+        }
         
         // encrypts the thingy n' stuff
         for(i = 0; i < buff_size - 1; i++){

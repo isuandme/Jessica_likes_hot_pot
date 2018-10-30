@@ -99,10 +99,6 @@ int main(int argv, char * argc[]) {
             
             while(1) {
                 
-                while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
-                    printf("child %d terminated\n", pid);
-                }
-                
                 // general integer type for loops and stuff
                 int i;
                 
@@ -119,7 +115,7 @@ int main(int argv, char * argc[]) {
                 }
                 
                 if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /* "quit" terminates child process*/
-                    exit(0);
+                    exit(1);
                 }
                 
                 char test[str_len]; /*---- copy length of input message ----*/
@@ -185,15 +181,13 @@ int main(int argv, char * argc[]) {
             
         } else {
             
-            
+            while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
+                printf("child %d terminated\n", pid);
+            }
             
         }
         
     } // big while()
-    
-    while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
-        printf("child %d terminated\n", pid);
-    }
     
     close(greySock);
     return 0;
