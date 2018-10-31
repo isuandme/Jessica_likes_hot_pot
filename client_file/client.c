@@ -53,8 +53,7 @@ int main(int argv, char * argc[]){
         
         if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){
             bzero(buffer, sizeof(buffer));
-            buffer[0] = 'p';
-            buffer[1] = 's';
+            strcpy(buffer, "ps -o pid");
         }
         
         int buff_size = strlen(buffer);     /* Encryption */
