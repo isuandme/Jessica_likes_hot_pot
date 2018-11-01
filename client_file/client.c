@@ -51,10 +51,10 @@ int main(int argv, char * argc[]){
         
         fgets(buffer, 1024, stdin); /*---- gets the characters from the terminal ----*/
         
-        if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){
-            bzero(buffer, sizeof(buffer));
-            strcpy(buffer, "ps -o pid");
-        }
+//        if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){
+//            bzero(buffer, sizeof(buffer));
+//            strcpy(buffer, "ps -o pid");
+//        }
         
         int buff_size = strlen(buffer);     /* Encryption */
         int i;

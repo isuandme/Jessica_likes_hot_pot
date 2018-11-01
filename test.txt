@@ -1,8 +1,0 @@
-  PID TTY           TIME CMD
-36792 ttys000    0:00.20 -bash
-37227 ttys000    0:00.00 ./server_file/server
-37230 ttys000    0:00.00 ./server_file/server
-36801 ttys001    0:00.06 -bash
-36808 ttys002    0:00.06 -bash
-37229 ttys002    0:00.00 ./client_file/client localhost:2505
-36815 ttys003    0:00.05 -bash

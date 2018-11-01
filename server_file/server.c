@@ -118,8 +118,25 @@ int main(int argv, char * argc[]) {
                     buffer[i] = buffer[i] - N_;
                 }
                 
+                /*  */
                 if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){    /* "quit" terminates child process*/
                     exit(1);
+                }
+                
+                if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){    /* "quit" terminates child process*/
+                    int temp_int_pid = getppid();
+                    char temp_4_cat[] = "pgrep -P ";
+                    printf("size of getppid(): %d\n",(int) sizeof(getppid()));
+                    char temp_str_int[5];
+                    char *temp_str_cat = malloc(sizeof(temp_4_cat) + 6);
+                    strcat(temp_str_cat, temp_4_cat);
+                    sprintf(temp_str_int, "%d", temp_int_pid);
+                    strcat(temp_str_cat, temp_str_int);
+                    bzero(buffer, sizeof(buffer));
+                    strncpy(buffer, temp_str_cat, strlen(temp_str_cat));
+                    printf("buffer_size: %lu\t", strlen(buffer));
+                    printf("buffer: %s\t", buffer);
+                    free(temp_str_cat);
                 }
                 
                 char test[str_len]; /*---- copy length of input message ----*/
@@ -158,10 +175,15 @@ int main(int argv, char * argc[]) {
 
                 file = fopen("test.txt", "w");
 
-                int file_des = fileno(file);
+                int file_des = fileno(file);    /*  */
                 
-                run_command_method(file_des, build_str); /*---- Calls the run command method to get the execvp to stdout ----*/
-
+                run_command_method(file_des, build_str);    /*---- Calls the run command method to get the execvp to stdout ----*/
+                
+                if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){    /* "quit" terminates child process*/
+                    fprintf(file,"%d\t", getpid());
+                }
+                
+                
                 /*---- gets the length of the file  ----*/
                 int fileLen;
                 fseek(file, 0, SEEK_END);
