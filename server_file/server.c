@@ -79,6 +79,8 @@ int main(int argv, char * argc[]) {
     pid_t pid;
     int stat;
     
+    signal(SIGCHLD, SIG_IGN);
+    
     while(1){ /*---- Starts main while-loop ----*/
         /*---- Accept call creates a new socket for the incoming connection ----*/
         addr_size = sizeof serverStorage;
@@ -90,6 +92,8 @@ int main(int argv, char * argc[]) {
         }
         
         pid_t client_pid;       /* client pid */
+        
+        
         
         if((client_pid = fork()) == 0) {    /* Starts the child */
             
