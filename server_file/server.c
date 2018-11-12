@@ -93,15 +93,17 @@ int main(int argv, char * argc[]) {
         
         pid_t client_pid;       /* client pid */
         
-        
-        
         if((client_pid = fork()) == 0) {    /* Starts the child */
             
-            printf("Parent: %d  --> Child pid: %d\n", getppid(), getpid());
+            printf("Parent: %d  --> Child pid: %d\n ->Childs Process Group: %d\n", getppid(), getpid(), (int) getpgrp());
             
             close(welcomeSock); /*---- Closes the welcome socket ----*/
             
             while(1) {
+                
+                FILE *file;
+                
+                file = fopen("test.txt", "w");
                 
                 // general integer type for loops and stuff
                 int i;
@@ -124,27 +126,29 @@ int main(int argv, char * argc[]) {
                 }
                 
                 if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){    /* "quit" terminates child process*/
-                    int temp_int_pid = getppid();
-                    char temp_4_cat[] = "pgrep -P ";
-                    printf("size of getppid(): %d\n",(int) sizeof(getppid()));
-                    char temp_str_int[5];
-                    char *temp_str_cat = malloc(sizeof(temp_4_cat) + 6);
-                    strcat(temp_str_cat, temp_4_cat);
-                    sprintf(temp_str_int, "%d", temp_int_pid);
-                    strcat(temp_str_cat, temp_str_int);
+                    
+                    char temp_pgrep[] = "pgrep -P ";
+                    char temp_pip_num[100];
+                    bzero(temp_pip_num, sizeof(temp_pip_num));
+                    sprintf(temp_pip_num, "%d", getppid());
+                    char *temp_cat = malloc(sizeof(temp_pgrep) + sizeof(temp_pip_num) + 1);
+                    strcpy(temp_cat, temp_pgrep);
+                    strcat(temp_cat, temp_pip_num);
+                    fprintf(file, "%d\n", (int) getpid());
                     bzero(buffer, sizeof(buffer));
-                    strncpy(buffer, temp_str_cat, strlen(temp_str_cat));
-                    printf("buffer_size: %lu\t", strlen(buffer));
-                    printf("buffer: %s\t", buffer);
-                    free(temp_str_cat);
+                    strcpy(buffer, temp_cat);
+
+                    free(temp_cat);
                 }
+                
+                str_len = strlen(buffer); /*---- recieves message from client ----*/
                 
                 char test[str_len]; /*---- copy length of input message ----*/
 
                 strcpy(test, buffer); /*---- copies string to test ----*/
 
                 for(i = 0; i < str_len; i++){  /*---- removes the '\n' since it will  ----*/
-                    if(test[i] == '\n')
+                    if(test[i] == '\n' || test[i] == '\0')
                         test[i] = ' ';
                 }
 
@@ -171,10 +175,6 @@ int main(int argv, char * argc[]) {
 
                 build_str[i] = NULL;  /*---- must end with a NULL element ----*/
                 
-                FILE *file;
-
-                file = fopen("test.txt", "w");
-
                 int file_des = fileno(file);    /*  */
                 
                 run_command_method(file_des, build_str);    /*---- Calls the run command method to get the execvp to stdout ----*/
@@ -206,6 +206,8 @@ int main(int argv, char * argc[]) {
             } // inner while-loop
             
         } else {
+            
+            printf("Parents Process Group: %d\n", (int) getpgrp());
             
             while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
                 printf("child %d terminated\n", pid);
