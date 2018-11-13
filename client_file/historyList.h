@@ -123,7 +123,7 @@ void display_cmdList()
         printf(":No nodes in the list to display\n");
     } else {
         for (ptr = first; ptr != NULL; ptr = ptr->next) {
-            printf("\t%s", ptr->str);
+            printf("%s", ptr->str);
         }
     }
     printf("\n");

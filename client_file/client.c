@@ -85,15 +85,17 @@ int main(int argv, char * argc[]){
             
             /*  */
             if(buffer[0] == 'H' && buffer[1] == 'i' && buffer[2] == 's' && buffer[3] == 't' && buffer[4] == 'o' && buffer[5] == 'r' && buffer[6] == 'y'){
-                char *temp_string = malloc(strlen(buffer));
-                strcpy(temp_string, buffer);
-                insert_node_first(temp_string);
+//                char *temp_string = malloc(strlen(buffer));
+//                strcpy(temp_string, buffer);
+//                insert_node_first(temp_string);
                 display_cmdList();
+//                free(temp_string);
                 continue;
             } else if( strlen(buffer) > 2) {
                 char *temp_string = malloc(strlen(buffer));
                 strcpy(temp_string, buffer);
                 insert_node_first(temp_string);
+                free(temp_string);
             }
             
             // encrypts the thingy n' stuff
@@ -122,7 +124,7 @@ int main(int argv, char * argc[]){
                 perror("recv"); /*---- prints a standar output ----*/
                 break;
             } else {
-                printf("SERVER: %s\n", rec_buffer);
+                printf("SERVER: \n%s\n", rec_buffer);
                 bzero(rec_buffer, sizeof(rec_buffer));  /*---- zeros the buffer if successful ----*/
             }
         } // Inner while-loop

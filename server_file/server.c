@@ -95,7 +95,7 @@ int main(int argv, char * argc[]) {
         
         if((client_pid = fork()) == 0) {    /* Starts the child */
             
-            printf("Parent: %d  --> Child pid: %d\n ->Childs Process Group: %d\n", getppid(), getpid(), (int) getpgrp());
+            //printf("Parent: %d  --> Child pid: %d\n ->Childs Process Group: %d\n", getppid(), getpid(), (int) getpgrp());
             
             close(welcomeSock); /*---- Closes the welcome socket ----*/
             
@@ -137,7 +137,6 @@ int main(int argv, char * argc[]) {
                     fprintf(file, "%d\n", (int) getpid());
                     bzero(buffer, sizeof(buffer));
                     strcpy(buffer, temp_cat);
-
                     free(temp_cat);
                 }
                 
@@ -179,10 +178,9 @@ int main(int argv, char * argc[]) {
                 
                 run_command_method(file_des, build_str);    /*---- Calls the run command method to get the execvp to stdout ----*/
                 
-                if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){    /* "quit" terminates child process*/
-                    fprintf(file,"%d\t", getpid());
-                }
-                
+//                if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){    /* "quit" terminates child process*/
+//                    fprintf(file,"%d\t", getpid());
+//                }
                 
                 /*---- gets the length of the file  ----*/
                 int fileLen;
@@ -207,7 +205,7 @@ int main(int argv, char * argc[]) {
             
         } else {
             
-            printf("Parents Process Group: %d\n", (int) getpgrp());
+            //printf("Parents Process Group: %d\n", (int) getpgrp());
             
             while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0) {
                 printf("child %d terminated\n", pid);
