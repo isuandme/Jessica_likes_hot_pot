@@ -110,6 +110,8 @@ int main(int argv, char * argc[]) {
                 
                 recv(greySock, buffer, sizeof(buffer), 0);  /* recieves message from client */
                 
+                printf("buffer: %s\n", buffer);
+                
                 char *word;     /* pointer to word */
                 char *brkt;     /* pointer to break */
                 char *sep = " ";    /*---- how we break stuff ----*/
@@ -125,8 +127,8 @@ int main(int argv, char * argc[]) {
                     exit(1);
                 }
                 
+                /* The below code gets the list of pids and enters them into the output file. */
                 if(buffer[0] == 'j' && buffer[1] == 'o' && buffer[2] == 'b' && buffer[3] == 's'){    /* "quit" terminates child process*/
-                    
                     char temp_pgrep[] = "pgrep -P ";
                     char temp_pip_num[100];
                     bzero(temp_pip_num, sizeof(temp_pip_num));
@@ -146,7 +148,7 @@ int main(int argv, char * argc[]) {
 
                 strcpy(test, buffer); /*---- copies string to test ----*/
 
-                for(i = 0; i < str_len; i++){  /*---- removes the '\n' since it will  ----*/
+                for(i = 0; i < str_len; i++){  /*---- removes the '\n' & '\0' since it will  ----*/
                     if(test[i] == '\n' || test[i] == '\0')
                         test[i] = ' ';
                 }

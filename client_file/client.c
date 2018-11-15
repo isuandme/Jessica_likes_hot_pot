@@ -12,6 +12,11 @@
 
 #define N_      5
 
+struct hist_node {
+    char *str;
+    struct hist_node *next;
+};
+
 int main(int argv, char * argc[]){
     
     int clientSocket;   /*---- ClientScoket is this personal clients socket.  ----*/
@@ -44,11 +49,14 @@ int main(int argv, char * argc[]){
         exit(1);
     }
     
+    char str_long_arr[1000][20];
+    int str_long_arr_index = 0;
+    
     while(1) {  /*---- loop repeats the receive / send of the client ----*/
         
         printf("CLIENT: ");
         
-        fgets(buffer, 1024, stdin); /*---- gets the characters from the terminal ----*/
+        fgets(buffer, 1024, stdin); /*---- gets the origional user input ----*/
         
         char *token, *string, *tofree;
         
@@ -57,51 +65,85 @@ int main(int argv, char * argc[]){
         // inner loop to run through string tokens
         while ((token = strsep(&string, ";")) != NULL) {
             
-            // space for string tokens
-            char *sep_temp_str = malloc(strlen(token) + 1);
-            
-            // something idk string stuff fuck it
-            strcpy(sep_temp_str, token);
-            strcat(sep_temp_str, "\0");
             bzero(buffer, sizeof(buffer));
-            strcpy(buffer, sep_temp_str);
-            free(sep_temp_str);
+            
+            //printf("token: %s\t length: %d\n", token, (int) strlen(token));
+
+            strcat(token, "\0");
+            strcpy(buffer, token);
+            
+            //printf("buffer 1: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
             int buff_size = strlen(buffer);     /* Encryption */
             int i;
             
             /* gets the last characters in the history list and executes it */
             if(buffer[0] == '!' && buffer[1] == '!') {
-                bzero(buffer, sizeof(buffer));
-                strcpy(buffer, get_index(1));
+                if(str_long_arr_index == 0) {
+                    printf("Nothing in history.");
+                    continue;
+                } else  {
+                    bzero(buffer, sizeof(buffer));
+                    strcpy(buffer, str_long_arr[str_long_arr_index - 1]);
+                }
             }
+            
+            //printf("buffer after !!: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
             /* gets the Nth element in the history list and executes it */
             if(buffer[0] == '!' && buffer[1] > 47 && buffer[1] < 58) {
-                int index = buffer[1] - 48;
-                bzero(buffer, sizeof(buffer));
-                strcpy(buffer, get_index(index));
+                int index = buffer[1] - 49;
+                if(str_long_arr_index == 0) {
+                    printf("Nothing in history.\n");
+                    continue;
+                } else if( str_long_arr_index < (buffer[1] - 48)) {
+                    printf("No such command in history.\n");
+                    continue;
+                } else {
+                    bzero(buffer, sizeof(buffer));
+                    strcpy(buffer, str_long_arr[index]);
+                }
             }
+            
+            //printf("buffer after !N: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
             /*  */
             if(buffer[0] == 'H' && buffer[1] == 'i' && buffer[2] == 's' && buffer[3] == 't' && buffer[4] == 'o' && buffer[5] == 'r' && buffer[6] == 'y'){
-//                char *temp_string = malloc(strlen(buffer));
-//                strcpy(temp_string, buffer);
-//                insert_node_first(temp_string);
-                display_cmdList();
-//                free(temp_string);
+                if(str_long_arr_index == 0) {
+                    printf("No such command in history.\n");
+                } else if (str_long_arr_index < 10 && str_long_arr_index > 0){
+                    for(i = 0; i < str_long_arr_index; i++) {
+                        printf("%s\n", str_long_arr[i]);
+                    }
+                } else {
+                    int incr = str_long_arr_index - 10;
+                    for(i = 0; i < 10; i++) {
+                        printf("%s\n", str_long_arr[i + incr]);
+                    }
+                }
+                strcpy(str_long_arr[str_long_arr_index], buffer); // copy buffer to the index of str_long_arr
+                str_long_arr_index += 1; // This is where the new command will be entered into the History List.
                 continue;
-            } else if( strlen(buffer) > 2) {
-                char *temp_string = malloc(strlen(buffer));
-                strcpy(temp_string, buffer);
-                insert_node_first(temp_string);
-                free(temp_string);
             }
+            
+            //printf("buffer after History: %s\t  length: %d\n", buffer, (int) strlen(buffer));
+            
+            if(buff_size > 1){
+                strcpy(str_long_arr[str_long_arr_index], buffer); // copy buffer to the index of str_long_arr
+                str_long_arr_index += 1; // This is where the new command will be entered into the History List.
+            }
+            
+            //printf("buffer after add: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
             // encrypts the thingy n' stuff
             for(i = 0; i < buff_size - 1; i++){
                 buffer[i] = buffer[i] + N_;
             }
+            
+//            printf("arr[0]: %s\n", str_long_arr[0]);
+//            printf("arr[1]: %s\n", str_long_arr[1]);
+//            printf("arr[2]: %s\n", str_long_arr[2]);
+//            printf("arr[3]: %s\n", str_long_arr[3]);
             
             /* SENDS TO SERVER */
             send(clientSocket, buffer, sizeof(buffer), 0);
@@ -111,9 +153,9 @@ int main(int argv, char * argc[]){
                 buffer[i] = buffer[i] - N_;
             }
             
-            // using the information after sending quit to kill the hcild process for this specific thingy
+            // using the information after sending quit to kill the child process for this specific client
             if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){
-                break;
+                return 0;
             }
             
             bzero(buffer, sizeof(buffer));
@@ -127,11 +169,10 @@ int main(int argv, char * argc[]){
                 printf("SERVER: \n%s\n", rec_buffer);
                 bzero(rec_buffer, sizeof(rec_buffer));  /*---- zeros the buffer if successful ----*/
             }
+            
+            
         } // Inner while-loop
-        
-        if(buffer[0] == 'q' && buffer[1] == 'u' && buffer[2] == 'i' && buffer[3] == 't'){
-            break;
-        }
+
     }
     
     close(clientSocket);    /*---- closes the socket when client exits main loop ----*/
