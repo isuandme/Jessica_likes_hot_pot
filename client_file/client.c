@@ -128,11 +128,12 @@ int main(int argv, char * argc[]){
             
             //printf("buffer after History: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
-            if(buff_size > 1){
+            if(buff_size > 1) {
                 strcpy(str_long_arr[str_long_arr_index], buffer); // copy buffer to the index of str_long_arr
                 str_long_arr_index += 1; // This is where the new command will be entered into the History List.
             }
             
+            //printf("buff_size: %d\n", buff_size);
             //printf("buffer after add: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
             // encrypts the thingy n' stuff
