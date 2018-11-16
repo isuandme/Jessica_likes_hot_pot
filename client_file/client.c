@@ -65,17 +65,25 @@ int main(int argv, char * argc[]){
         // inner loop to run through string tokens
         while ((token = strsep(&string, ";")) != NULL) {
             
+            int i;
+            
             bzero(buffer, sizeof(buffer));
             
             //printf("token: %s\t length: %d\n", token, (int) strlen(token));
 
-            strcat(token, "\0");
+            
+            for(i = 0; i < (int) strlen(token); i++)
+                if(token[i] == '\n') {
+                    token[i] = '\0';
+                } else {
+                    strcat(token, "\0");
+                }
+                
             strcpy(buffer, token);
             
             //printf("buffer 1: %s\t  length: %d\n", buffer, (int) strlen(buffer));
             
             int buff_size = strlen(buffer);     /* Encryption */
-            int i;
             
             /* gets the last characters in the history list and executes it */
             if(buffer[0] == '!' && buffer[1] == '!') {
@@ -141,10 +149,12 @@ int main(int argv, char * argc[]){
                 buffer[i] = buffer[i] + N_;
             }
             
-//            printf("arr[0]: %s\n", str_long_arr[0]);
-//            printf("arr[1]: %s\n", str_long_arr[1]);
-//            printf("arr[2]: %s\n", str_long_arr[2]);
-//            printf("arr[3]: %s\n", str_long_arr[3]);
+            printf("arr[0]: %s\n", str_long_arr[0]);
+            printf("arr[1]: %s\n", str_long_arr[1]);
+            printf("arr[2]: %s\n", str_long_arr[2]);
+            printf("arr[3]: %s\n", str_long_arr[3]);
+            printf("arr[4]: %s\n", str_long_arr[4]);
+            printf("arr[5]: %s\n", str_long_arr[5]);
             
             /* SENDS TO SERVER */
             send(clientSocket, buffer, sizeof(buffer), 0);
